@@ -3,52 +3,52 @@ locals @@
 .code
 org 100h
 ;============================
-VIDEOSEG equ 0b800h
+VIDEOSEG           equ 0b800h
 
-SCREEN_LENGTH equ 80
+SCREEN_LENGTH      equ 80
 
-COORD_X equ 10
-COORD_Y equ 8
+COORD_X            equ 10
+COORD_Y            equ 8
 
-GROUND_START equ (80 * COORD_Y + COORD_X) * 2
+GROUND_START       equ (80 * COORD_Y + COORD_X) * 2
 
-SHADOW_START equ (80 * (COORD_Y + 1) + COORD_X + 2) * 2 
+SHADOW_START       equ (80 * (COORD_Y + 1) + COORD_X + 2) * 2 
 
-FRAME_PLACE equ (SHADOW_START + 6)
+FRAME_PLACE        equ (SHADOW_START + 6)
 
-TEXT_PLACE equ SHADOW_START + (80 * 3 + 13) * 2
+TEXT_PLACE         equ SHADOW_START + (80 * 3 + 13) * 2
 
-FRAME_LENGTH equ (GROUND_LENGTH - 10)
+FRAME_LENGTH       equ (GROUND_LENGTH - 10)
 
 FRAME_LENGTH_BYTES equ FRAME_LENGTH * 2
 
-FRAME_HEIGHT equ 14
+FRAME_HEIGHT       equ 14
 
-GROUND_HEIGHT equ 10
+GROUND_HEIGHT      equ 10
 
-GROUND_LENGTH equ 50
+GROUND_LENGTH      equ 50
 
-SHADOW_COLOUR equ 70h
+SHADOW_COLOUR      equ 70h
 
-GROUND_COLOUR equ 20h
+GROUND_COLOUR      equ 20h
 
-HORIZ_FRAME equ 205
+HORIZ_FRAME        equ 205
 
-VERT_EDGE equ 186
+VERT_EDGE          equ 186
 
-FRAME_COLOUR equ 21h
+FRAME_COLOUR       equ 21h
 
-NEWLINE_PASS equ (SCREEN_LENGTH - GROUND_LENGTH) * 2
+NEWLINE_PASS       equ (SCREEN_LENGTH - GROUND_LENGTH) * 2
 
-UL_CORNER equ 201
+UL_CORNER          equ 201
 
-UR_CORNER equ 187
+UR_CORNER          equ 187
 
-DL_CORNER equ 200
+DL_CORNER          equ 200
 
-DR_CORNER equ 188
+DR_CORNER          equ 188
 
-N_LETTERS equ 20
+N_LETTERS          equ 20
 ;============================
 Start:
 
@@ -95,6 +95,7 @@ Start:
 ;       ah - color
 ;       al - char to draw
 ;       bx - ground length
+;Output: rectangle filled with color
 ;Destroy: si, cx, di        
 ;======================================
 Draw_ground proc
@@ -118,6 +119,7 @@ Draw_ground proc
 ;       si - frame height
 ;       bx - frame place
 ;       bp - frame height * screen length
+;Output: regtangular frame
 ;Destroy: di, cx, si, ah ,al
 ;======================================
 Draw_frame proc
@@ -182,6 +184,7 @@ Draw_frame proc
 ;Entry: cx - number of letters
 ;       S - string to print
 ;       bx - first letter position
+;Output: text on the screen
 ;Destroy: cx, si, bx, dl 
 ;===============================
 Print proc
