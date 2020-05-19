@@ -51,10 +51,10 @@ syscall
 
 Printf:
 
-xor r15, r15
-
 push rbp
 mov rbp, rsp
+
+xor r15, r15
 
 mov rbx, rbp
 
