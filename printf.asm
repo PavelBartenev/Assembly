@@ -4,6 +4,7 @@ SECTION .text
 
 _start:
 
+;____________________________
 ;mov rbx, rsp
 
 ;push msg
@@ -19,6 +20,7 @@ _start:
 ;push 3802
 
 ; msg4 3802 100 '!' 127
+;____________________________
 
 push 127
 
@@ -34,17 +36,22 @@ push commands
 
 call Printf
 
+lea rsp, [rsp + r15 * 8]
+
 mov rax, 60
 xor rdi, rdi
 syscall
 
 ;=================================================
 ;Printf
-;Input: parameters in the stack from left to right
+;Input: parameters in the stack
 ;Output: printed message on the screen
+;Destroy: all registers 
 ;=================================================
 
 Printf:
+
+xor r15, r15
 
 push rbp
 mov rbp, rsp
@@ -72,62 +79,23 @@ printf_step:
 
       var_process:
            inc r8
+           inc r15
 
-           add rbx, 8      ;!!!
-
-           cmp byte [r8], 's'
-           je String_process
-           
-           cmp byte [r8], 'c'
-           je Char_process
-
-           cmp byte [r8], 'b'
-           je Bin_process
-
-           cmp byte [r8], 'o'
-           je Oct_process
-
-           cmp byte [r8], 'x'
-           je Hex_process
-
-           cmp byte [r8], 'd'
-           je Dec_process
+           add rbx, 8   
 
            cmp byte [r8], '%'
-           je Procent_process
-           
-           
-        String_process:
-              call Print_str
-              inc r8
-              jmp printf_step
+           je Procent_process   
 
-        Char_process:
-              call Print_char
-              inc r8
-              jmp printf_step
+           xor rax, rax
+           mov al, byte [r8]
+           sub al, 'b'
 
-        Bin_process:
-              call Print_bin
-              inc r8
-              jmp printf_step
+           call [percents_table + rax * 8]
 
-         Oct_process:
-              call Print_oct
-              inc r8
-              jmp printf_step
-
-         Hex_process:
-              call Print_hex
-              inc r8
-              jmp printf_step
-
-         Dec_process:
-              call Print_dec
-              inc r8
-              jmp printf_step
-          
-         Procent_process:
+           inc r8
+           jmp printf_step
+        
+           Procent_process:
                mov rax, 1
                mov rdi, 1
                mov rsi, r8
@@ -353,6 +321,21 @@ Print_dec:
          
 SECTION .data
 
+
+percents_table:  dq Print_bin
+                 times ('c' - 'b' - 1) dq 0
+                 dq Print_char
+                 times ('d' - 'c' - 1) dq 0
+                 dq Print_dec
+                 times ('o' - 'd' - 1) dq 0
+                 dq Print_oct
+                 times ('s' - 'o' - 1) dq 0
+                 dq Print_str
+                 times ('x' - 's' - 1) dq 0
+                 dq Print_hex
+
+
+
 Oct_mask equ 7
 Hex_mask equ 15
 Bin_mask equ 1
@@ -370,5 +353,9 @@ msg4: db "love", 0
 new_commands: db "%b", 0
 
 commands: db "I %s %x. %d%%%c%b", 10, "Just because I could...", 0
+
+our_str: db "Tut polnaya %s Pashi", 0
+
+freedom: db "svoboda", 0
 
 digit_store: db "0123456789ABCDEF", 0
