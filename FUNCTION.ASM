@@ -4,7 +4,6 @@ locals @@
 org 100h
 Start:
 
-
    mov	di, offset memchr_test
 	mov	cx, 04h
 	mov	al, 0ch
@@ -22,9 +21,6 @@ Start:
    call strchr
  ;________________________________________
 
-memchr_test:  db 0bh, 0dh, 0ch, 0fh
-strlen_test: db 'hello', 00h
-strchr_test: db 'find something', 00h
 ;==============================
 ;Finding the first occurence of the character in the array
 ;Entry: es:di - pointer to the array
@@ -178,9 +174,27 @@ Strcmp proc
     cld
 @@cycle:
     cmpsb
-    call Strlen
-    mov di, offset str1
-    repe cmpsb
+    jne @@stop
+    
+    cmp byte ptr es:[di - 1], 00h
+    je @@firstend
+    
+    cmp byte ptr ds:[si - 1], 00h
+    je @@secondend
 
+    jmp @@cycle
+@@firstend:
+    cmp byte ptr ds:[si - 1], 00h
+    ret
+@@secondend:
+    cmp byte ptr es:[di - 1], 00h
+    ret
+@@stop:
     ret
 Strcmp endp
+
+memchr_test:  db 0bh, 0dh, 0ch, 0fh
+strlen_test: db 'hello', 00h
+strchr_test: db 'find something', 00h
+
+end Start
