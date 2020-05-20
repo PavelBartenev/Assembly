@@ -201,7 +201,7 @@ public:
 
 		free(current);
 
-		size--;
+		--size;
 
 		return data;
 	}
